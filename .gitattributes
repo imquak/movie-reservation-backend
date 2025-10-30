@@ -1,0 +1,10 @@
+# Tell Git to handle most text files automatically
+* text=auto
+
+# These are Windows scripts, they MUST have CRLF endings
+*.cmd    text eol=crlf
+*.bat    text eol=crlf
+
+# These are Unix scripts, they MUST have LF endings
+*.sh     text eol=lf
+mvnw     text eol=lf
