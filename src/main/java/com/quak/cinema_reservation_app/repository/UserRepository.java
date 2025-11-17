@@ -17,17 +17,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-@Repository // Tells Spring this class is for data access
+@Repository
 public class UserRepository {
     private final JdbcTemplate jdbcTemplate;
 
     private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
 
-    // Inject JDBCTemplate
     @Autowired
     public UserRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
-    // Build a 'Movie' object from a database row.
     private static class UserMapper implements RowMapper<User> {
         @Override
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -50,11 +48,6 @@ public class UserRepository {
      */
     public List<User> findAll() {
         String sql = "SELECT * FROM users;";
-
-        // We use the jdbcTemplate to run the query.
-        // We pass it the SQL and our RowMapper.
-        // It handles the connection, runs the query, and uses our
-        // mapper to build a list of User objects.
         return jdbcTemplate.query(sql, new UserMapper());
     }
 
@@ -65,11 +58,7 @@ public class UserRepository {
      * @throws org.springframework.dao.EmptyResultDataAccessException if no user is found.
      */
     public User findById(Long id) {
-        // Here is the SQL query you asked about
         String sql = "SELECT * FROM users WHERE id = ?;";
-
-        // We use queryForObject for one item
-        // We pass the sql, the mapper, and the id to fill the '?'
         return jdbcTemplate.queryForObject(sql, new UserMapper(), id);
     }
 

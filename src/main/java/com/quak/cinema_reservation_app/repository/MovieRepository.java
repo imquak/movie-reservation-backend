@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 @Repository // Tells Spring this class is for data access
@@ -23,11 +22,9 @@ public class MovieRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    // Inject JDBCTemplate
     @Autowired
     public MovieRepository(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
-    // Build a 'Movie' object from a database row.
     private static class MovieMapper implements RowMapper<Movie> {
         @Override
         public Movie mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -57,10 +54,6 @@ public class MovieRepository {
         String sql = "SELECT * FROM movies;";
         log.info("Finding All Movies");
 
-        // We use the jdbcTemplate to run the query.
-        // We pass it the SQL and our RowMapper.
-        // It handles the connection, runs the query, and uses our
-        // mapper to build a list of Movie objects.
         return jdbcTemplate.query(sql, new MovieMapper());
     }
 
@@ -72,11 +65,7 @@ public class MovieRepository {
      */
     public Movie findById(Long id) {
         log.info("Finding Movie by Id");
-        // Here is the SQL query you asked about
         String sql = "SELECT * FROM movies WHERE id = ?;";
-
-        // We use queryForObject for one item
-        // We pass the sql, the mapper, and the id to fill the '?'
         return jdbcTemplate.queryForObject(sql, new MovieMapper(), id);
     }
 
@@ -87,19 +76,14 @@ public class MovieRepository {
      */
     public Movie save(Movie movie) {
         log.info("Saving Movie");
-        // Our SQL query with placeholders. Note we do NOT insert 'id'
-        // as it is BIGSERIAL (auto-incrementing).
         String sql = "INSERT INTO movies (title, description, release_date, duration_minutes, poster_url) " +
                 "VALUES (?,?,?,?,?);";
 
-        // This KeyHolder will store the 'id' that PostgreSQL generates
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            // We tell the PreparedStatement to return the generated 'id' column
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
 
-            // Fill in the '?' placeholders in order
             ps.setString(1, movie.getTitle());
             ps.setString(2, movie.getDescription());
             ps.setObject(3, movie.getReleaseDate()); // Use setObject for LocalDate
@@ -108,8 +92,6 @@ public class MovieRepository {
             return ps;
         }, keyHolder);
 
-        // Now, we get the new ID from the KeyHolder and set it on our object
-        // We assume the ID is a Long (Number)
         if (keyHolder.getKey() != null) {
             movie.setId(keyHolder.getKey().longValue());
         }
@@ -123,10 +105,8 @@ public class MovieRepository {
                 "duration_minutes = ?, poster_url = ? WHERE id = ?;";
 
         jdbcTemplate.update(connection -> {
-            // We tell the PreparedStatement to return the generated 'id' column
             PreparedStatement ps = connection.prepareStatement(sql);
 
-            // Fill in the '?' placeholders in order
             ps.setString(1, movie.getTitle());
             ps.setString(2, movie.getDescription());
             ps.setObject(3, movie.getReleaseDate()); // Use setObject for LocalDate
