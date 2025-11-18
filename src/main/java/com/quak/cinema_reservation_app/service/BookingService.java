@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 @Service
 public class BookingService {
     private static final Logger log = LoggerFactory.getLogger(BookingService.class);
+
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ShowtimeRepository showtimeRepository;
@@ -28,17 +29,14 @@ public class BookingService {
     public Booking createBooking(Long userId, Long showtimeId, Long seatId) {
         log.info("Creating booking for user {} on showtime {} for seat {}", userId, showtimeId, seatId);
 
-        // 1. Validate inputs (will throw EmptyResultDataAccessException if not found)
         userRepository.findById(userId);
         Showtime showtime = showtimeRepository.findById(showtimeId);
         Seat seat = seatRepository.findById(seatId);
 
-        // 2. Check if the seat is in the right room
         if (!seat.getRoomId().equals(showtime.getRoomId())) {
             throw new IllegalArgumentException("This seat is not in the room for this showtime.");
         }
 
-        // 3. Check if the seat is bookable
         if (seat.getSeatType() != SeatType.SEAT && seat.getSeatType() != SeatType.WHEELCHAIR) {
             throw new IllegalArgumentException("This spot is an " + seat.getSeatType() + " and cannot be booked.");
         }
@@ -49,7 +47,6 @@ public class BookingService {
         newBooking.setSeatId(seatId);
 
         try {
-            // 4. Save it (DB will throw error if seat is already taken)
             return bookingRepository.save(newBooking);
         } catch (DataIntegrityViolationException e) {
             log.warn("Booking failed: Seat {} is already booked for showtime {}", seatId, showtimeId);
