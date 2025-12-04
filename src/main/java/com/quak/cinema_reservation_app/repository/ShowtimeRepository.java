@@ -2,6 +2,7 @@ package com.quak.cinema_reservation_app.repository;
 
 import com.quak.cinema_reservation_app.model.Seat;
 import com.quak.cinema_reservation_app.model.Showtime;
+import com.quak.cinema_reservation_app.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +67,25 @@ public class ShowtimeRepository {
         log.info("Finding all showtimes for movie id: {}", movieId);
         String sql = "SELECT * FROM showtimes WHERE movie_id = ?;";
         return jdbcTemplate.query(sql, new ShowtimeMapper(), movieId);
+    }
+
+    public void update(Showtime showtime){
+        log.info("Updating showtime");
+        String sql = "UPDATE showtime SET start_time = ?, movie_id = ?, room_id = ? WHERE id = ?;";
+
+        jdbcTemplate.update(sql,
+                showtime.getStartTime(),
+                showtime.getMovieId(),
+                showtime.getRoomId(),
+                showtime.getId()
+        );
+    }
+
+    public void deleteById(long id){
+        log.info("Deleting showtime");
+        findById(id); // Exists
+        String sql = "DELETE FROM showtime WHERE id = ?;";
+
+        jdbcTemplate.update(sql, id);
     }
 }

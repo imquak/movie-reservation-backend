@@ -1,8 +1,6 @@
 package com.quak.cinema_reservation_app.repository;
 
-import com.quak.cinema_reservation_app.model.Movie;
 import com.quak.cinema_reservation_app.model.Seat;
-import com.quak.cinema_reservation_app.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

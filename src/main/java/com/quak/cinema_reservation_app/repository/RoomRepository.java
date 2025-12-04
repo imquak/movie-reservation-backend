@@ -47,6 +47,16 @@ public class RoomRepository {
         return jdbcTemplate.queryForObject(sql, new RoomMapper(), id);
     }
 
+    public void update(Room room){
+        log.info("Updating room");
+        String sql = "UPDATE rooms SET name = ? WHERE id = ?;";
+
+        jdbcTemplate.update(sql,
+                room.getName(),
+                room.getId()
+        );
+    }
+
     public Room save(Room room) {
         log.info("Saving new room: {}", room.getName());
         String sql = "INSERT INTO rooms (name) VALUES (?);";

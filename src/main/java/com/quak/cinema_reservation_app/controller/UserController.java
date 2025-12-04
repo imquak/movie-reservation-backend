@@ -31,7 +31,7 @@ public class UserController {
      */
     @GetMapping
     public List<User> getAllUsers() {
-        return userService.findAll();
+        return userService.getAllUsers();
     }
 
     /**
@@ -43,7 +43,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         try {
-            User user = userService.findById(id);
+            User user = userService.getById(id);
             return new ResponseEntity<>(user, HttpStatus.OK);
 
         } catch (EmptyResultDataAccessException e) {
@@ -64,7 +64,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         try {
-            userService.findById(id);
+            userService.getById(id);
             user.setId(id);
             userService.update(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
@@ -77,9 +77,8 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
         try {
-            userRepository.findById(id);
-            userRepository.deleteById(id);
-
+            userService.getById(id);
+            userService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

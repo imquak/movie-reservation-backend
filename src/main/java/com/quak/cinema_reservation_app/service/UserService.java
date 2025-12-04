@@ -14,7 +14,7 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository){ this.userRepository = userRepository; }
 
-    public List<User> getAllMovies() { return userRepository.findAll(); }
+    public List<User> getAllUsers() { return userRepository.findAll(); }
     public User getById(long id){ return userRepository.findById(id); }
     public User save(User user){ return userRepository.save(user); }
     public void deleteById(long id){ userRepository.deleteById(id); }
