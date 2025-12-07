@@ -72,7 +72,7 @@ public class SeatRepository {
      */
     public Seat save(Seat seat) {
 
-        String sql = "INSERT INTO seat (room_id,seat_row,seat_col,seat_type) VALUES (?,?,?,?);";
+        String sql = "INSERT INTO seats (room_id,seat_row,seat_col,seat_type) VALUES (?,?,?,?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 

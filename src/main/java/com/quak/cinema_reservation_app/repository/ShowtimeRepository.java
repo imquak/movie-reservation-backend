@@ -71,7 +71,7 @@ public class ShowtimeRepository {
 
     public void update(Showtime showtime){
         log.info("Updating showtime");
-        String sql = "UPDATE showtime SET start_time = ?, movie_id = ?, room_id = ? WHERE id = ?;";
+        String sql = "UPDATE showtimes SET start_time = ?, movie_id = ?, room_id = ? WHERE id = ?;";
 
         jdbcTemplate.update(sql,
                 showtime.getStartTime(),
@@ -84,7 +84,7 @@ public class ShowtimeRepository {
     public void deleteById(long id){
         log.info("Deleting showtime");
         findById(id); // Exists
-        String sql = "DELETE FROM showtime WHERE id = ?;";
+        String sql = "DELETE FROM showtimes WHERE id = ?;";
 
         jdbcTemplate.update(sql, id);
     }

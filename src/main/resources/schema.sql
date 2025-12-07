@@ -1,6 +1,6 @@
 -- Drop tables in reverse order of dependency
 DROP TABLE IF EXISTS bookings;
-DROP TABLE IF EXISTS showtime;
+DROP TABLE IF EXISTS showtimes;
 DROP TABLE IF EXISTS seats;
 DROP TABLE IF EXISTS rooms;
 DROP TABLE IF EXISTS users;
@@ -37,18 +37,18 @@ CREATE TABLE seats (
     seat_col INT NOT NULL,
     seat_type INT NOT NULL,
 
-    CONSTRAINT fk_room FOREIGN KEY(room_id) REFERENCES rooms(id)
+    CONSTRAINT fk_seat_room FOREIGN KEY(room_id) REFERENCES rooms(id)
 );
 
 -- Create relationship table for showtime
-CREATE TABLE showtime (
+CREATE TABLE showtimes (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     start_time TIMESTAMP WITH TIME ZONE NOT NULL,
     movie_id BIGINT NOT NULL,
     room_id BIGINT NOT NULL,
 
-    CONSTRAINT fk_movie FOREIGN KEY(movie_id) REFERENCES movies(id),
-    CONSTRAINT fk_room FOREIGN KEY(room_id) REFERENCES rooms(id)
+    CONSTRAINT fk_showtime_movie FOREIGN KEY(movie_id) REFERENCES movies(id),
+    CONSTRAINT fk_showtime_room FOREIGN KEY(room_id) REFERENCES rooms(id)
 );
 
 -- Create final relationship table for bookings
@@ -60,9 +60,9 @@ CREATE TABLE bookings (
     showtime_id BIGINT NOT NULL,
     seat_id BIGINT NOT NULL,
 
-    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT fk_showtime FOREIGN KEY(showtime_id) REFERENCES showtime(id),
-    CONSTRAINT fk_seat FOREIGN KEY(seat_id) REFERENCES seats(id),
+    CONSTRAINT fk_booking_user FOREIGN KEY(user_id) REFERENCES users(id),
+    CONSTRAINT fk_booking_showtime FOREIGN KEY(showtime_id) REFERENCES showtime(id),
+    CONSTRAINT fk_booking_seat FOREIGN KEY(seat_id) REFERENCES seats(id),
 
     CONSTRAINT unique_seat_per_showtime UNIQUE(showtime_id, seat_id)
 );
