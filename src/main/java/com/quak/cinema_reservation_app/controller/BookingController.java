@@ -1,19 +1,15 @@
 package com.quak.cinema_reservation_app.controller;
 
 import com.quak.cinema_reservation_app.model.Booking;
-import com.quak.cinema_reservation_app.model.Movie;
-import com.quak.cinema_reservation_app.repository.MovieRepository;
 import com.quak.cinema_reservation_app.service.BookingService;
-import com.quak.cinema_reservation_app.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 
-// This combines @Controller and @ResponseBody.
 @RestController
 @RequestMapping("/api/bookings")
 public class BookingController {
@@ -23,58 +19,61 @@ public class BookingController {
     @Autowired
     public BookingController(BookingService bookingService) { this.bookingService = bookingService; }
 
-    /** Get all Bookings */
+    /** * Get all Bookings
+     * @return List of all bookings
+     */
     @GetMapping
     public List<Booking> getAllBookings() {
-        return bookingService.createBooking();
+        return bookingService.getAllBookings();
     }
 
-    /** Get Movie by {id} */
+    /** * Get Booking by {id}
+     * @param id The ID of the booking
+     * @return The booking or 404 Not Found
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<Movie> getMovieById(@PathVariable Long id) {
+    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
         try {
-            Movie movie = movieService.getById(id);
-            return new ResponseEntity<>(movie, HttpStatus.OK);
+            Booking booking = bookingService.getById(id);
+            return new ResponseEntity<>(booking, HttpStatus.OK);
 
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    /** Create Movie via ResponseEntity */
+    /** * Create Booking via ResponseEntity
+     * @param booking The booking details (user_id, showtime_id, seat_id)
+     * @return The created booking
+     */
     @PostMapping
-    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
-        Movie savedMovie = movieService.save(movie);
-
-        return new ResponseEntity<>(savedMovie, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
+    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
         try {
-            movieService.getById(id);
-            movie.setId(id);
-            movieService.update(movie);
-
-            return new ResponseEntity<>(movie, HttpStatus.OK);
-
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // We delegate to the service method that handles validation logic
+            Booking savedBooking = bookingService.createBooking(
+                    booking.getUserId(),
+                    booking.getShowtimeId(),
+                    booking.getSeatId()
+            );
+            return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            // Returns 400 Bad Request if seat is taken or invalid
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
+    /** * Delete Booking by {id}
+     * @param id The ID of the booking to delete
+     * @return 200 OK or 404 Not Found
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Movie> deleteMovie(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
         try {
-            movieService.getById(id);
-            movieService.deleteById(id);
-
+            bookingService.getById(id); // Check existence
+            bookingService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
-
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
-
 }

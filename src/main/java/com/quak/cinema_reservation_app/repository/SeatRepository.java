@@ -33,7 +33,6 @@ public class SeatRepository {
             seat.setSeatRow(rs.getInt("seat_row"));
             seat.setSeatCol(rs.getInt("seat_col"));
             seat.setSeatType(Seat.getSeatTypeFromIndex(rs.getInt("seat_type")));
-
             return seat;
         }
     }
@@ -47,6 +46,11 @@ public class SeatRepository {
         return jdbcTemplate.query(sql, new SeatMapper());
     }
 
+    /**
+     * Finds all seats associated with a specific room.
+     * @param id The Room ID
+     * @return List of seats in that room
+     */
     public List<Seat> findAllFromRoom(Long id) {
         log.info("Finding seats in room with id: {}", id);
         String sql = "SELECT * FROM seats WHERE room_id = ?;";
@@ -57,28 +61,23 @@ public class SeatRepository {
      * Finds a single seat by its ID.
      * @param id The ID of the seat to find.
      * @return The Seat object.
-     * @throws org.springframework.dao.EmptyResultDataAccessException if no user is found.
      */
     public Seat findById(Long id) {
         String sql = "SELECT * FROM seats WHERE id = ?;";
-
         return jdbcTemplate.queryForObject(sql, new SeatMapper(), id);
     }
 
     /**
-     * Saves a new user to the database and returns the user with its new ID.
+     * Saves a new seat to the database.
      * @param seat The Seat object to save (without an ID).
      * @return The same Seat object, now updated with the auto-generated ID.
      */
     public Seat save(Seat seat) {
-
         String sql = "INSERT INTO seats (room_id,seat_row,seat_col,seat_type) VALUES (?,?,?,?);";
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-
             ps.setLong(1,seat.getRoomId());
             ps.setInt(2,seat.getSeatRow());
             ps.setInt(3,seat.getSeatCol());
@@ -89,27 +88,35 @@ public class SeatRepository {
         if (keyHolder.getKey() != null) {
             seat.setId(keyHolder.getKey().longValue());
         }
-
         return seat;
     }
 
+    /**
+     * Updates an existing seat.
+     * @param seat The seat object with updated values.
+     */
     public void update(Seat seat){
         log.info("Updating seat");
-        String sql = "UPDATE seats SET room_id = ?, seat_row = ?, seat_col = ? seat_type = ? WHERE id = ?;";
+        // FIXED: Added missing comma before seat_type
+        String sql = "UPDATE seats SET room_id = ?, seat_row = ?, seat_col = ?, seat_type = ? WHERE id = ?;";
 
         jdbcTemplate.update(sql,
                 seat.getRoomId(),
                 seat.getSeatRow(),
                 seat.getSeatCol(),
-                seat.getSeatType().getValue()
+                seat.getSeatType().getValue(),
+                seat.getId() // Added ID for the WHERE clause
         );
     }
 
+    /**
+     * Deletes a seat by ID.
+     * @param id The ID of the seat.
+     */
     public void deleteById(long id){
         log.info("Deleting Seat");
-        findById(id); // Exists
+        findById(id); // Exists check
         String sql = "DELETE FROM seats WHERE id = ?;";
-
         jdbcTemplate.update(sql, id);
     }
 }
