@@ -5,9 +5,11 @@ import com.quak.cinema_reservation_app.model.User;
 import com.quak.cinema_reservation_app.repository.SeatRepository;
 import com.quak.cinema_reservation_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SeatService {
     private final SeatRepository seatRepository;
 

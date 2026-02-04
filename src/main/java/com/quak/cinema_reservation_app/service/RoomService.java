@@ -7,9 +7,11 @@ import com.quak.cinema_reservation_app.repository.RoomRepository;
 import com.quak.cinema_reservation_app.repository.SeatRepository;
 import com.quak.cinema_reservation_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class RoomService {
     private final RoomRepository roomRepository;
 

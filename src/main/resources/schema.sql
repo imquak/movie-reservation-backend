@@ -61,7 +61,7 @@ CREATE TABLE bookings (
     seat_id BIGINT NOT NULL,
 
     CONSTRAINT fk_booking_user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT fk_booking_showtime FOREIGN KEY(showtime_id) REFERENCES showtime(id),
+    CONSTRAINT fk_booking_showtime FOREIGN KEY(showtime_id) REFERENCES showtimes(id),
     CONSTRAINT fk_booking_seat FOREIGN KEY(seat_id) REFERENCES seats(id),
 
     CONSTRAINT unique_seat_per_showtime UNIQUE(showtime_id, seat_id)
