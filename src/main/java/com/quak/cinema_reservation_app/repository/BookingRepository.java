@@ -44,7 +44,6 @@ public class BookingRepository {
      * @return The saved Booking object with the generated ID.
      */
     public Booking save(Booking booking) {
-        // We don't insert booking_time, it has a DEFAULT in the DB
         String sql = "INSERT INTO bookings (user_id, showtime_id, seat_id) VALUES (?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -127,7 +126,7 @@ public class BookingRepository {
      */
     public void deleteById(long id){
         log.info("Deleting Booking id: {}", id);
-        findById(id); // Ensure it exists before attempting delete
+        findById(id);
         String sql = "DELETE FROM bookings WHERE id = ?;";
 
         jdbcTemplate.update(sql, id);
