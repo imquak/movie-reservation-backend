@@ -1,9 +1,6 @@
 package com.quak.cinema_reservation_app.controller;
 
-import com.quak.cinema_reservation_app.model.Movie;
 import com.quak.cinema_reservation_app.model.Seat;
-import com.quak.cinema_reservation_app.repository.MovieRepository;
-import com.quak.cinema_reservation_app.service.MovieService;
 import com.quak.cinema_reservation_app.service.SeatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 
-// This combines @Controller and @ResponseBody.
 @RestController
 @RequestMapping("/api/seats")
 public class SeatController {
@@ -25,70 +21,87 @@ public class SeatController {
         this.seatService = seatService;
     }
 
-    /** Get all Seats */
+    /**
+     * Get all Seats
+     * @return List of all seats
+     */
     @GetMapping
     public List<Seat> getAllSeats() {
         return seatService.getAll();
     }
 
-    /** Get Seat by {id} */
+    /**
+     * Get Seat by ID
+     * @param id The ID of the seat
+     * @return The seat or 404 Not Found
+     */
     @GetMapping("/id/{id}")
     public ResponseEntity<Seat> getById(@PathVariable Long id) {
         try {
             Seat seat = seatService.getById(id);
             return new ResponseEntity<>(seat, HttpStatus.OK);
-
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    /** Get Seat by {room_id} */
+    /**
+     * Get all Seats for a specific Room
+     * @param room_id The ID of the room
+     * @return List of seats in the room or 404 Not Found
+     */
     @GetMapping("/room/{room_id}")
     public ResponseEntity<List<Seat>> getAllByRoomId(@PathVariable Long room_id) {
         try {
             List<Seat> seats = seatService.getAllByRoom(room_id);
             return new ResponseEntity<>(seats, HttpStatus.OK);
-
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    /** Create Seat via ResponseEntity */
+    /**
+     * Create a new Seat
+     * @param seat The seat object
+     * @return The created seat
+     */
     @PostMapping
     public ResponseEntity<Seat> createSeat(@RequestBody Seat seat) {
         Seat savedSeat = seatService.save(seat);
-
         return new ResponseEntity<>(savedSeat, HttpStatus.CREATED);
     }
 
+    /**
+     * Update an existing Seat
+     * @param id The ID of the seat to update
+     * @param seat The updated seat data
+     * @return The updated seat or 404 Not Found
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Seat> updateSeat(@PathVariable Long id, @RequestBody Seat seat) {
         try {
-            seatService.getById(id);
+            seatService.getById(id); // Check existence
             seat.setId(id);
             seatService.update(seat);
-
             return new ResponseEntity<>(seat, HttpStatus.OK);
-
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
+    /**
+     * Delete a Seat by ID
+     * @param id The ID of the seat to delete
+     * @return 200 OK or 404 Not Found
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Seat> deleteSeat(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSeat(@PathVariable Long id) {
         try {
-            seatService.getById(id);
+            seatService.getById(id); // Check existence
             seatService.deleteById(id);
-
             return new ResponseEntity<>(HttpStatus.OK);
-
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
-
 }
