@@ -48,7 +48,7 @@ public class UserController {
 
     /**
      * Create a new User
-     * @param user The user object containing username, email, and password
+     * @param user The user details (username, email, password)
      * @return The created user
      */
     @PostMapping
@@ -63,13 +63,13 @@ public class UserController {
     /**
      * Update an existing User
      * @param id The ID of the user to update
-     * @param user The updated user data
+     * @param user The updated user details (username, email, password)
      * @return The updated user or 404 Not Found
      */
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         try {
-            userService.getById(id); // Check existence
+            userService.getById(id);
             user.setId(id);
             userService.update(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
@@ -86,7 +86,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         try {
-            userService.getById(id); // Check existence
+            userService.getById(id);
             userService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {

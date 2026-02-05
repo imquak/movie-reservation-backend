@@ -62,7 +62,7 @@ public class SeatController {
 
     /**
      * Create a new Seat
-     * @param seat The seat object
+     * @param seat The seat details (room_id, seat_row, seat_col, seat_type)
      * @return The created seat
      */
     @PostMapping
@@ -74,13 +74,13 @@ public class SeatController {
     /**
      * Update an existing Seat
      * @param id The ID of the seat to update
-     * @param seat The updated seat data
+     * @param seat The updated seat details (room_id, seat_row, seat_col, seat_type)
      * @return The updated seat or 404 Not Found
      */
     @PutMapping("/{id}")
     public ResponseEntity<Seat> updateSeat(@PathVariable Long id, @RequestBody Seat seat) {
         try {
-            seatService.getById(id); // Check existence
+            seatService.getById(id);
             seat.setId(id);
             seatService.update(seat);
             return new ResponseEntity<>(seat, HttpStatus.OK);
@@ -97,7 +97,7 @@ public class SeatController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSeat(@PathVariable Long id) {
         try {
-            seatService.getById(id); // Check existence
+            seatService.getById(id);
             seatService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {

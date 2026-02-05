@@ -47,7 +47,7 @@ public class MovieController {
 
     /**
      * Create a new Movie
-     * @param movie The movie object
+     * @param movie The movie details (title, description, release_date, duration_minutes, poster_url)
      * @return The created movie
      */
     @PostMapping
@@ -59,15 +59,16 @@ public class MovieController {
     /**
      * Update an existing Movie
      * @param id The ID of the movie to update
-     * @param movie The updated movie data
+     * @param movie The updated movie details (title, description, release_date, duration_minutes, poster_url)
      * @return The updated movie or 404 Not Found
      */
     @PutMapping("/{id}")
     public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
         try {
-            movieService.getById(id); // Check existence
+            movieService.getById(id);
             movie.setId(id);
             movieService.update(movie);
+
             return new ResponseEntity<>(movie, HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -82,7 +83,7 @@ public class MovieController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         try {
-            movieService.getById(id); // Check existence
+            movieService.getById(id);
             movieService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {

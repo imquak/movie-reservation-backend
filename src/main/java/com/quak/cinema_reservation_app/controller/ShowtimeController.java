@@ -49,7 +49,7 @@ public class ShowtimeController {
 
     /**
      * Create a new Showtime
-     * @param showtime The showtime object
+     * @param showtime The showtime details (start_time, movie_id, room_id)
      * @return The created showtime
      */
     @PostMapping
@@ -61,13 +61,13 @@ public class ShowtimeController {
     /**
      * Update a Showtime
      * @param id The ID of the showtime
-     * @param showtime The updated showtime data
+     * @param showtime The updated showtime details (start_time, movie_id, room_id)
      * @return The updated showtime or 404 Not Found
      */
     @PutMapping("/{id}")
     public ResponseEntity<Showtime> updateShowtime(@PathVariable Long id, @RequestBody Showtime showtime) {
         try {
-            showtimeService.getById(id); // Check existence
+            showtimeService.getById(id);
             showtime.setId(id);
             showtimeService.update(showtime);
             return new ResponseEntity<>(showtime, HttpStatus.OK);
@@ -77,7 +77,7 @@ public class ShowtimeController {
     }
 
     /**
-     * Delete a Showtime
+     * Delete a Showtime by ID
      * @param id The ID of the showtime
      * @return 200 OK or 404 Not Found
      */

@@ -47,7 +47,7 @@ public class RoomController {
 
     /**
      * Create a new Room
-     * @param room The room object
+     * @param room The room details (name)
      * @return The created room
      */
     @PostMapping
@@ -59,13 +59,13 @@ public class RoomController {
     /**
      * Update an existing Room
      * @param id The ID of the room to update
-     * @param room The updated room data
+     * @param room The updated room details (name)
      * @return The updated room or 404 Not Found
      */
     @PutMapping("/{id}")
     public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody Room room) {
         try {
-            roomService.getById(id); // Check existence
+            roomService.getById(id);
             room.setId(id);
             roomService.update(room);
             return new ResponseEntity<>(room, HttpStatus.OK);
@@ -75,14 +75,14 @@ public class RoomController {
     }
 
     /**
-     * Delete a Room
+     * Delete a Room by ID
      * @param id The ID of the room to delete
      * @return 200 OK or 404 Not Found
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
         try {
-            roomService.getById(id); // Check existence
+            roomService.getById(id);
             roomService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EmptyResultDataAccessException e) {
