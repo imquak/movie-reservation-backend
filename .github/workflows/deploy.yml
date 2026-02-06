@@ -17,16 +17,11 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
-            # 1. Navigate to the project folder
             cd ~/Projects/movie-reservation-backend
 
-            # 2. Pull the latest code from GitHub
             git pull origin main
 
-            # 3. Rebuild and restart the containers
-            # We use 'sudo' if your user needs it, or plain docker if you added the user to the group
             docker compose down
             docker compose up -d --build
 
-            # 4. Cleanup unused images to save disk space
             docker image prune -f
